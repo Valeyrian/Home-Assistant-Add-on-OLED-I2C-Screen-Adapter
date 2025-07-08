@@ -14,7 +14,7 @@ HA OS typically restricts direct access to I2C due to system permissions, but th
 - **UI-Based Configuration**: Add-on options are configurable through the Home Assistant interface 
 
 ## Documentation
-For detailed documentation, including installation instructions, configuration options, and usage examples, please refer to the [official documentation](https://github.com/Valeyrian/Home_Assistant_Add-on_OLED_I2C_Screen_Adapter/docs/en.md).
+For detailed documentation, including installation instructions, configuration options, and usage examples, please refer to the [official documentation](https://github.com/Valeyrian/Home_Assistant_Add-on_OLED_I2C_Screen_Adapter/blob/main/oled-i2c-screen-adapter/DOCS.md).
 
 ## Contributing
 
