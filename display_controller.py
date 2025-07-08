@@ -8,6 +8,8 @@ import socket
 import subprocess
 from datetime import datetime
 import netifaces
+import qrcode
+from PIL import Image
 
 # --- Configuration depuis les options Home Assistant ---
 def load_config():
@@ -47,6 +49,10 @@ brightness = config.get('default_brightness', 255)
 
 print(f"Configuration MQTT: {MQTT_BROKER}:{MQTT_PORT} User:{MQTT_USER}")
 
+# Configuration tierce
+
+QR_LINK = config.get('qr_link', 'http://homeassistant.local:8123/')
+
 # --- Initialisation de l'écran OLED ---
 device = None
 try:
@@ -75,7 +81,7 @@ except Exception as e:
 
 
 # --- Variables globales ---
-current_mode = "auto"  # auto, manual, system, network, sensors
+current_mode = "auto"  # auto, manual, system, network, sensors, qr
 manual_text = ""
 refresh_interval = 5  # secondes
 brightness = 255
@@ -284,6 +290,43 @@ def display_sensors_screen(draw):
     date_str = now.strftime("%d/%m/%Y")
     draw.text((2, 54), date_str, fill="white")
 
+def display_qr_screen(draw):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=4,   # petit box size pour avoir une image petite
+        border=1,
+    )
+    qr.add_data(QR_LINK)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="white", back_color="black").convert('1')
+    
+    # Taille max (avec marge)
+    max_width = DISPLAY_WIDTH - 4
+    max_height = DISPLAY_HEIGHT - 4
+    
+    img_width, img_height = img.size
+
+    scale = min(max_width / img_width, max_height / img_height, 1)
+ 
+    new_size = (int(img_width * scale), int(img_height * scale))
+    
+    img = img.resize(new_size, resample=Image.NEAREST)
+    
+    pos_x = (DISPLAY_WIDTH - new_size[0]) // 2
+    pos_y = (DISPLAY_HEIGHT - new_size[1]) // 2
+
+    pixels = img.load()
+    for y in range(new_size[1]):
+        for x in range(new_size[0]):
+            # pixel vaut 0 (noir) ou 255 (blanc)
+            if pixels[x, y] == 255:
+                draw.point((pos_x + x, pos_y + y), fill=1)
+            else:
+                # Optionnel : dessiner en noir (effacer)
+                draw.point((pos_x + x, pos_y + y), fill=0)
+
 def display_manual_text(draw, text):
     """Affiche du texte manuel"""
     draw_header(draw, "MESSAGE")
@@ -312,9 +355,11 @@ def update_display_content():
                 display_network_screen(draw)
             elif current_mode == "sensors":
                 display_sensors_screen(draw)
+            elif current_mode == "qr":
+                display_qr_screen(draw)
             elif current_mode == "auto":
                 # Rotation automatique entre les écrans
-                screens = [display_system_screen, display_network_screen, display_sensors_screen]
+                screens = [display_system_screen, display_network_screen, display_sensors_screen, display_qr_screen]
                 screens[current_screen % len(screens)](draw)
                 current_screen += 1
             
@@ -370,7 +415,7 @@ def on_message(client, userdata, msg):
                 print(f"Commande non reconnue: {payload}")
                 
         elif topic == MQTT_TOPICS['mode']:
-            if payload in ["auto", "manual", "system", "network", "sensors"]:
+            if payload in ["auto", "manual", "system", "network", "sensors", "qr"]:
                 current_mode = payload
                 print(f"Mode changé vers: {current_mode}")
                 update_display_content()

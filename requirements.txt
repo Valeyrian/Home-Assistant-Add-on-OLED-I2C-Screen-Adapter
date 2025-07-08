@@ -5,4 +5,5 @@ Pillow
 luma.oled
 psutil
 netifaces
+qrcode[pil]
 
