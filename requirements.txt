@@ -1,0 +1,8 @@
+paho-mqtt
+smbus
+smbus2
+Pillow
+luma.oled
+psutil
+netifaces
+
