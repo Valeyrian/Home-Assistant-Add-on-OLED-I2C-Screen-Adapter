@@ -1,9 +1,9 @@
 {
   "name": "Contrôleur d'Écran OLED GME12864",
-  "version": "0.2.0",
+  "version": "0.2.6",
   "init": false,
   "slug": "oled-gme12864-system-display",
-  "description": "Add-on pour contrôler un écran OLED GME12864 via I2C avec affichage des informations système, réseau et capteurs via MQTT. Le tout sur le rasp qui host Home Assistant.",
+  "description": "Add-on pour contrôler un écran OLED GME12864 via I2C avec affichage des informations système, réseau et capteurs via MQTT.",
   "url": "https://github.com/votre_utilisateur/oled-gme12864-addon",
   "arch": ["aarch64", "armhf", "armv7", "amd64"],
   "startup": "services",
@@ -32,7 +32,8 @@
       "mode": "screen/gme12864/mode",
       "brightness": "screen/gme12864/brightness",
       "refresh": "screen/gme12864/refresh"
-    }
+    },
+    "qr_link": "http://homeassistant.local:8123/"
   },
   "schema": {
     "mqtt_broker": "str",
@@ -53,7 +54,8 @@
       "mode": "str",
       "brightness": "str",
       "refresh": "str"
-    }
+    },
+    "qr_link": "str"
   },
   "ports": {},
   "hassio_api": true,
