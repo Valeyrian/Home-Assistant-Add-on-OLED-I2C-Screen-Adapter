@@ -35,7 +35,7 @@ HA OS typically restricts direct access to I2C due to system permissions, but th
 For advanced users, you can manually edit the `config.yaml` file inside the add-on folder to customize settings beyond the UI options. However, this is usually not necessary.
 
 Refer to the official documentation for more info:  
-[Home Assistant Add-ons](https://www.home-assistant.io/docs/addons/)
+[Home Assistant Add-ons](https://www.home-assistant.io/addons/)
 
 ## Configuration
 
